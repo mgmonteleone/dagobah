@@ -13,7 +13,7 @@ Dagobahd:
 
   # credentials for single-user auth
   auth_disabled: False
-  password: n33du2g0
+  password: dagobah
 
   # choose one of the available backends
   # None: Dagobah will not use a backend to permanently store data

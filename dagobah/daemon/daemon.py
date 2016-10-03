@@ -272,28 +272,55 @@ def init_core_logger(location, config):
 def get_backend(config):
     """ Returns a backend instance based on the Daemon config file. """
 
-    backend_string = get_conf(config, 'Dagobahd.backend', None)
-
-    if backend_string is None:
-        from ..backend.base import BaseBackend
-        return BaseBackend()
-
-    elif backend_string.lower() == 'mongo':
+    if os.getenv("BACKEND"):
+        backend_string = os.getenv("BACKEND")
+        print("Conf: MongoDB backend selected from ENV")
         backend_kwargs = {}
         for conf_kwarg in ['host', 'port', 'db',
                            'dagobah_collection', 'job_collection',
                            'log_collection']:
-            backend_kwargs[conf_kwarg] = get_conf(config,
-                                                  'MongoBackend.%s' % conf_kwarg)
-        backend_kwargs['port'] = int(backend_kwargs['port'])
+            # Now lets loop through the args, and set what we can.
+            try:
+                if os.getenv(conf_kwarg):
+                    if conf_kwarg == "port":
+                        backend_kwargs[conf_kwarg] = int(os.getenv(conf_kwarg)) # Need an Int for port, ENVS are str
+                    else:
+                        backend_kwargs[conf_kwarg] = os.getenv(conf_kwarg)
+                    print(conf_kwarg+" = "+ os.getenv(conf_kwarg))
+                else: # if an env variable is missing, but is on that we have a default, just set the default.
+                    if conf_kwarg in ("dagobah_collection","job_collection","log_collection"):
+                        print("Setting default setting for " + conf_kwarg)
+                        backend_kwargs[conf_kwarg] = conf_kwarg
+                    else:
+                        # If we dont have a default, then error out.
+                        print("If you are configuring from ENV, you must supply all values in confing "
+                             "including: " + conf_kwarg + " Which is missing")
+            except:
+                raise EnvironmentError("Can not initialize mongo config ENV.")
 
-        try:
-            from ..backend.mongo import MongoBackend
-        except:
-            raise ImportError('Could not initialize the MongoDB Backend. Are you sure' +
-                              ' the optional drivers are installed? If not, try running ' +
-                              '"pip install pymongo" to install them.')
-        return MongoBackend(**backend_kwargs)
+    else:
+        backend_string = get_conf(config, 'Dagobahd.backend', None)
+
+        if backend_string is None:
+            from ..backend.base import BaseBackend
+            return BaseBackend()
+
+        elif backend_string.lower() == 'mongo':
+            backend_kwargs = {}
+            for conf_kwarg in ['host', 'port', 'db',
+                               'dagobah_collection', 'job_collection',
+                               'log_collection']:
+                backend_kwargs[conf_kwarg] = get_conf(config,
+                                                      'MongoBackend.%s' % conf_kwarg)
+            backend_kwargs['port'] = int(backend_kwargs['port'])
+
+    try:
+        from ..backend.mongo import MongoBackend
+    except:
+        raise ImportError('Could not initialize the MongoDB Backend. Are you sure' +
+                          ' the optional drivers are installed? If not, try running ' +
+                          '"pip install pymongo" to install them.')
+    return MongoBackend(**backend_kwargs)
 
     raise ValueError('unknown backend type specified in conf')
 
