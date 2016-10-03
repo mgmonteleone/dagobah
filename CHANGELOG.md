@@ -1,3 +1,13 @@
+### v0.4.0
+   * Dockerfile and Docker support
+   * Configuration is now possible through ENV variables.
+    * APP_HOST
+    * APP_PORT
+    * DEBUG
+    * LOGIN_DISABLED
+    * APP_PASSWORD
+   * ENV Variables override config file settings.
+   
 ### v0.3.2
 
   * Added Dagobahd.debug key to config to enable Flask's debugging

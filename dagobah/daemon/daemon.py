@@ -109,18 +109,52 @@ def configure_requests_logger(config, app):
         logger.addHandler(stdout_logger)
 
 def configure_app():
-    app.debug = get_conf(config, 'Dagobahd.debug', False)
-    app.secret_key = get_conf(config, 'Dagobahd.app_secret', 'default_secret')
-    app.config['LOGIN_DISABLED'] = get_conf(config,
-                                            'Dagobahd.auth_disabled',
-                                            False)
-    app.config['APP_PASSWORD'] = get_conf(config,
-                                          'Dagobahd.password', 'dagobah')
+    """
+    Configure the application using either env_variables or the config file.
 
+    Env Variables override the config file.
+    """
+    if os.getenv("DEBUG"):
+        app.debug = os.getenv("debug")
+        print("Congfig: DEBUG from ENV")
+    else:
+        print("Config: DEBUG from File")
+        app.debug = get_conf(config, 'Dagobahd.debug', False)
+
+    if os.getenv("LOGIN_DISABLED"):
+        app.debug = os.getenv("LOGIN_DISABLED")
+        print("Congfig: LOGIN_DISABLED from ENV")
+    else:
+        print("Config: LOGIN_DISABLED from File")
+        app.config['LOGIN_DISABLED'] = get_conf(config,
+                                                'Dagobahd.auth_disabled',
+                                                False)
+    if os.getenv("APP_PASSWORD"):
+        app.debug = os.getenv("APP_PASSWORD")
+        print("Congfig: APP_PASSWORD from ENV")
+    else:
+        print("Config: APP_PASSWORD from File")
+        app.config['APP_PASSWORD'] = get_conf(config,
+                                              'Dagobahd.password', 'dagobah')
+
+    if os.getenv("APP_HOST"):
+        print("CONFIG: HOST from ENV")
+        app.config['APP_HOST'] = os.getenv("APP_HOST")
+    else:
+        app.config['APP_HOST'] = get_conf(config, 'Dagobahd.host', '0.0.0.0')
+        print("Config: APP_HOST from File")
+
+    if os.getenv("APP_PORT"):
+        app.config['APP_PORT'] = os.getenv("APP_PORT")
+        print("Config: APP_PORT from ENV")
+    else:
+        app.config['APP_PORT'] = get_conf(config, 'Dagobahd.port', '9000')
+        print("Config: APP_PORT from File")
+
+    # These ones we do not look at ENV, cause we dont care.
     app.config['AUTH_RATE_LIMIT'] = 30
     app.config['AUTH_ATTEMPTS'] = []
-    app.config['APP_HOST'] = get_conf(config, 'Dagobahd.host', '127.0.0.1')
-    app.config['APP_PORT'] = get_conf(config, 'Dagobahd.port', '9000')
+    app.secret_key = get_conf(config, 'Dagobahd.app_secret', 'default_secret')
 
     configure_requests_logger(config, app)
 
