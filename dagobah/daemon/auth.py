@@ -6,12 +6,15 @@ from flask import render_template, request, url_for, redirect
 from flask_login import UserMixin, login_user, logout_user, login_required
 
 from .app import app, login_manager
+from os import getenv
 
 class User(UserMixin):
     def get_id(self):
         return 1
 
 SingleAuthUser = User()
+
+
 
 
 @login_manager.user_loader
@@ -27,7 +30,10 @@ def login():
 @app.route('/do-login', methods=['POST'])
 def do_login():
     """ Attempt to auth using single login. Rate limited at the site level. """
-
+    print("Try to see if we have config for APP_PASSWORD")
+    if getenv("APP_PASSWORD"):
+        app.config['APP_PASSWORD'] = getenv("APP_PASSWORD")
+        print("-------"+app.config["APP_PASSWORD"])
     dt_filter = lambda x: x >= datetime.utcnow() - timedelta(seconds=60)
     app.config['AUTH_ATTEMPTS'] = filter(dt_filter, app.config['AUTH_ATTEMPTS'])
 
