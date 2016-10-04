@@ -29,7 +29,13 @@ def login():
 
 @app.route('/do-login', methods=['POST'])
 def do_login():
-    """ Attempt to auth using single login. Rate limited at the site level. """
+    """ Attempt to auth using single login. Rate limited at the site level.
+
+        TODO: Remove the hack here which checks to see i
+
+    """
+
+
     print("Try to see if we have config for APP_PASSWORD")
     if getenv("APP_PASSWORD"):
         app.config['APP_PASSWORD'] = getenv("APP_PASSWORD")

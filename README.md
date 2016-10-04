@@ -3,7 +3,7 @@ Dagobah
 
 <img src="http://i.imgur.com/D5ZxGXA.png" height="400">
 
-[![Build Status](https://travis-ci.org/thieman/dagobah.png?branch=master)](https://travis-ci.org/thieman/dagobah?branch=master) ![PyPi version](https://pypip.in/v/dagobah/badge.png)
+
 
 Dagobah is a simple dependency-based job scheduler written in Python. Dagobah allows you to schedule periodic jobs using Cron syntax. Each job then kicks off a series of tasks (subprocesses) in an order defined by a dependency graph you can easily draw with click-and-drag in the web interface.
 
@@ -11,7 +11,39 @@ Dagobah lets you retry individual tasks from failure, sends you helpful email re
 
 You can also [use Dagobah directly in Python.](../../wiki/Using Dagobah Directly in Python)
 
+
+## Docker
+
+This has been packaged as a docker container, ready to run in Rancher using ENV variables to configure.
+
+Image: ```dkrs.co/dagobah```
+
+### Mongo Configuration In Docker
+
+The ENV configuration includes items for the Mongo Set up as well as password, port etc.
+
+Make sure you link the container
+
+```
+BACKEND = None | mongo
+db = mongo
+host = mongo
+port = 21017
+
+```
+
+### Other config with ENV
+
+    APP_HOST = 0.0.0.0
+    APP_PORT = 9000
+    DEBUG = True
+    LOGIN_DISABLED = False
+    APP_PASSWORD = dagobah # Change on deploy.
+
+
 ## Installation
+
+This os only applicable if you are not running in Docker.
 
 Dagobah works with Python 2.6 or 2.7.
 
@@ -28,8 +60,8 @@ To use a backend, you need to install the drivers using the commands below and t
 
 #### MongoDB
 
-    pip install pymongo
-    
+    Pymongo is uncluded in the requirements.txt and in the Docker setup.
+        
 #### Deprecated Backends
 
  * **SQLite**: Deprecated following version 0.3.1.
@@ -66,6 +98,7 @@ To use a backend, you need to install the drivers using the commands below and t
  * [Utkarsh Sengar](https://twitter.com/utsengar)
  * Stephanie Wei
  * [Ryan Clough](https://github.com/rclough)
+ * [Matthew G. Monteleone](https://github.com/mgmonteleone) ??
 
 #### Get Started Contributing
 
