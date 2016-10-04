@@ -7,6 +7,7 @@
     * LOGIN_DISABLED
     * APP_PASSWORD
    * ENV Variables override config file settings.
+   * Mongo config also from ENV variables.
    
 ### v0.3.2
 

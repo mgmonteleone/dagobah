@@ -272,7 +272,7 @@ def init_core_logger(location, config):
 def get_backend(config):
     """ Returns a backend instance based on the Daemon config file. """
 
-    if os.getenv("BACKEND"):
+    if os.getenv("BACKEND") and os.getenv("BACKEND") == "mongo":
         backend_string = os.getenv("BACKEND")
         print("Conf: MongoDB backend selected from ENV")
         backend_kwargs = {}
